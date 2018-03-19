@@ -54,7 +54,7 @@ export default class Search extends Component {
 	onClick() {
 		let {menu, query, page, results} = this.state;
 		page = (page + 10);
-		axios.get('http://api.agusadiyanto.net/halal/?menu='+menu+'&query='+query+'&page='+page)
+		axios.get('https://api.agusadiyanto.net/halal/?menu='+menu+'&query='+query+'&page='+page)
 			.then(response => {
 				const newResults = response.data.data;
 				results.push(...newResults);
