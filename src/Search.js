@@ -32,7 +32,7 @@ export default class Search extends Component {
 		if (menu === '') {
 			alert('Pilih Menu Dahulu');
 		}
-		axios.get('http://api.agusadiyanto.net/halal/?menu='+menu+'&query='+query+'&page='+page)
+		axios.get('https://api.agusadiyanto.net/halal/?menu='+menu+'&query='+query+'&page='+page)
 			.then(response => {
 				this.setState({results: response.data.data, show: true})
 				if (response.data.status === "error") {
