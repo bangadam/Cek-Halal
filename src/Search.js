@@ -32,7 +32,7 @@ export default class Search extends Component {
 		if (menu === '') {
 			alert('Pilih Menu Dahulu');
 		}
-		axios.get('https://api.agusadiyanto.net/halal/?menu='+menu+'&query='+query+'&page='+page)
+		axios.get('//api.agusadiyanto.net/halal/?menu='+menu+'&query='+query+'&page='+page)
 			.then(response => {
 				this.setState({results: response.data.data, show: true})
 				if (response.data.status === "error") {
@@ -54,7 +54,7 @@ export default class Search extends Component {
 	onClick() {
 		let {menu, query, page, results} = this.state;
 		page = (page + 10);
-		axios.get('https://api.agusadiyanto.net/halal/?menu='+menu+'&query='+query+'&page='+page)
+		axios.get('//api.agusadiyanto.net/halal/?menu='+menu+'&query='+query+'&page='+page)
 			.then(response => {
 				const newResults = response.data.data;
 				results.push(...newResults);
