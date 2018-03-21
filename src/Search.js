@@ -69,10 +69,10 @@ export default class Search extends Component {
 			// http://api.agusadiyanto.net/halal/?menu=...&query=...&page=...
 		 	// https://halalmui.org/mui14/index.php/main/produk_halal_detail/'+menu+'/'+query+'/Y/'+page
 
-			axios.get('https://halalmui.org/mui14/index.php/main/produk_halal_detail/'+menu+'/'+query+'/Y/'+page)
+			axios.get('https://halalmui.org/mui14/index.php/main/produk_halal_detail/'+menu+'/'+query+'/Y/'+page, {crossDomain: true})
 			.then(response => {
 				let data = response.data;
-
+				console.log(data)
 				if (data.match(/no result found/g)) {
 					this.setState({show: false})
 					alert(query+' not found')
