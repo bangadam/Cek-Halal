@@ -15,7 +15,6 @@ export default class Input extends Component {
 								<option value="nama_produk">Nama Produk</option>
 								<option value="nama_produsen">Nama Produsen</option>
 								<option value="nomor_sertifikat">Nomor Sertifikat</option>
-								<option value="semua_kategori">Semua Kategori</option>
 							</select>
 						</div>
 					</div>

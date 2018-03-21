@@ -3,6 +3,7 @@ import Input from './Input';
 import List from './List';
 import Button from './Button';
 import axios from 'axios';
+import cheerio from 'cheerio';
 
 export default class Search extends Component {
 	constructor(props) {
@@ -26,21 +27,62 @@ export default class Search extends Component {
 		this.setState({[name]: value});
 	}
 
+	scrapData(data) {
+		const $ = cheerio.load(data, {
+					 normalizeWhitespace: true,
+    				 xmlMode: true
+				});
+
+		var nama_produk,
+			nama_produsen,
+			nomor_sertifikat,
+			berlaku_hingga,
+			json,
+			produsen_dan_berlaku;
+		var dataku = [];
+
+		$('td').filter(function() {
+		var data = $(this);
+			nama_produk = data.children().eq(0).text();
+			nomor_sertifikat = data.children().eq(1).text().split(":")[1];
+			produsen_dan_berlaku = data.children().eq(3).text();
+			nama_produsen = produsen_dan_berlaku.split(':')[1];
+			berlaku_hingga = produsen_dan_berlaku.split(':')[2];
+			json = {
+				nama_produk: nama_produk,
+				nama_produsen: nama_produsen,
+				nomor_sertifikat: nomor_sertifikat,
+				berlaku_hingga: berlaku_hingga
+			};
+			dataku.push(json);
+		})
+		dataku.splice(0, 1)
+		return dataku;
+	}
+
 	OnSubmit(event) {
 		event.preventDefault();
 		const {menu, query, page} = this.state;
 		if (menu === '') {
 			alert('Pilih Menu Dahulu');
-		}
-		axios.get('http://api.agusadiyanto.net/halal/?menu='+menu+'&query='+query+'&page='+page)
+		} else {
+			// http://api.agusadiyanto.net/halal/?menu=...&query=...&page=...
+		 	// https://halalmui.org/mui14/index.php/main/produk_halal_detail/'+menu+'/'+query+'/Y/'+page
+
+			axios.get('https://halalmui.org/mui14/index.php/main/produk_halal_detail/'+menu+'/'+query+'/Y/'+page)
 			.then(response => {
-				this.setState({results: response.data.data, show: true})
-				if (response.data.status === "error") {
+				let data = response.data;
+
+				if (data.match(/no result found/g)) {
 					this.setState({show: false})
-					alert(query+' Tidak ditemukan');
+					alert(query+' not found')
+				}else {
+					let dataku = this.scrapData(data);
+
+					this.setState({results: dataku, show: true})
 				}
 			})
-			.catch(error => alert('Error'))
+		}
 	}
 
 	getAllData() {
@@ -54,9 +96,10 @@ export default class Search extends Component {
 	onClick() {
 		let {menu, query, page, results} = this.state;
 		page = (page + 10);
-		axios.get('http://api.agusadiyanto.net/halal/?menu='+menu+'&query='+query+'&page='+page)
+		axios.get('https://halalmui.org/mui14/index.php/main/produk_halal_detail/'+menu+'/'+query+'/Y/'+page)
 			.then(response => {
-				const newResults = response.data.data;
+				let newResults = response.data;
+					newResults = this.scrapData(newResults)
 				results.push(...newResults);
 				this.setState({results: results, page: page});
 			})
